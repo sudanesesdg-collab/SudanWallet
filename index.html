@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SudanWallet - محفظة USDT غير احتجازية على BNB Chain</title>
+<meta name="description" content="محفظة رقمية غير احتجازية على شبكة BNB Smart Chain. أرسل واستقبل USDT بسهولة وأمان تام.">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  :root {
+    --gold: #F0B90B;
+    --gold-dark: #d4a017;
+    --bg-dark: #0B0E11;
+    --bg-card: #1E2329;
+    --bg-card-hover: #2B3139;
+    --text-primary: #EAECEF;
+    --text-secondary: #848E9C;
+    --green: #0ECB81;
+    --border: #2B3139;
+  }
+
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ===== خلفية متحركة ===== */
+  .bg-glow {
+    position: fixed;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.15;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .glow-1 { background: var(--gold); top: -200px; right: -200px; }
+  .glow-2 { background: #F0B90B; bottom: -200px; left: -200px; opacity: 0.08; }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ===== Navbar ===== */
+  nav {
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    background: rgba(11, 14, 17, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+  }
+  .nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 900;
+    font-size: 1.4rem;
+  }
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    box-shadow: 0 4px 20px rgba(240, 185, 11, 0.3);
+  }
+  .logo span { color: var(--gold); }
+
+  .nav-btn {
+    background: var(--gold);
+    color: #000;
+    padding: 10px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+  }
+  .nav-btn:hover {
+    background: var(--gold-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(240, 185, 11, 0.4);
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+  }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(240, 185, 11, 0.1);
+    border: 1px solid rgba(240, 185, 11, 0.3);
+    color: var(--gold);
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+  .badge .dot {
+    width: 8px;
+    height: 8px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 20px;
+    letter-spacing: -0.02em;
+  }
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--gold), #FFD666);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    max-width: 650px;
+    margin: 0 auto 40px;
+    line-height: 1.8;
+  }
+
+  .cta-group {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+    color: #000;
+    padding: 16px 40px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    box-shadow: 0 8px 30px rgba(240, 185, 11, 0.35);
+    border: none;
+    cursor: pointer;
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 40px rgba(240, 185, 11, 0.5);
+  }
+  .btn-secondary {
+    background: var(--bg-card);
+    color: var(--text-primary);
+    padding: 16px 40px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.05rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s;
+    border: 1px solid var(--border);
+    cursor: pointer;
+  }
+  .btn-secondary:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--gold);
+  }
+
+  /* ===== Phone Mockup ===== */
+  .hero-visual {
+    margin: 60px auto 0;
+    max-width: 320px;
+    position: relative;
+  }
+  .phone {
+    background: linear-gradient(145deg, #1E2329, #0B0E11);
+    border: 2px solid var(--border);
+    border-radius: 40px;
+    padding: 20px 16px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(240, 185, 11, 0.1);
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 5px;
+    background: var(--border);
+    border-radius: 10px;
+  }
+  .phone-screen {
+    background: var(--bg-dark);
+    border-radius: 28px;
+    padding: 40px 16px 20px;
+    min-height: 420px;
+  }
+  .balance-card {
+    background: linear-gradient(135deg, rgba(240, 185, 11, 0.15), rgba(240, 185, 11, 0.05));
+    border: 1px solid rgba(240, 185, 11, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .balance-label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  .balance-amount {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--gold);
+  }
+  .balance-network {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-top: 6px;
+  }
+  .quick-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .action-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 8px;
+    text-align: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+  .action-btn .icon {
+    font-size: 1.3rem;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  /* ===== Features ===== */
+  .section {
+    padding: 80px 0;
+  }
+  .section-title {
+    text-align: center;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+  .section-subtitle {
+    text-align: center;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto 60px;
+    font-size: 1.05rem;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+  }
+  .feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 24px;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(240, 185, 11, 0.1), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .feature-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(240, 185, 11, 0.4);
+    background: var(--bg-card-hover);
+  }
+  .feature-card:hover::before { opacity: 1; }
+
+  .feature-icon {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, rgba(240, 185, 11, 0.2), rgba(240, 185, 11, 0.05));
+    border: 1px solid rgba(240, 185, 11, 0.3);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+    margin-bottom: 20px;
+  }
+  .feature-card h3 {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+  }
+  .feature-card p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+
+  /* ===== Steps ===== */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+    counter-reset: step;
+  }
+  .step {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative;
+    counter-increment: step;
+  }
+  .step::before {
+    content: "0" counter(step);
+    position: absolute;
+    top: -20px;
+    right: 24px;
+    font-size: 3rem;
+    font-weight: 900;
+    color: rgba(240, 185, 11, 0.15);
+    line-height: 1;
+  }
+  .step h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: var(--gold);
+  }
+  .step p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+
+  /* ===== Stats ===== */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 48px 24px;
+  }
+  .stat {
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  /* ===== CTA Final ===== */
+  .cta-final {
+    background: linear-gradient(135deg, rgba(240, 185, 11, 0.1), rgba(240, 185, 11, 0.02));
+    border: 1px solid rgba(240, 185, 11, 0.3);
+    border-radius: 28px;
+    padding: 60px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-final h2 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 900;
+    margin-bottom: 16px;
+  }
+  .cta-final p {
+    color: var(--text-secondary);
+    max-width: 550px;
+    margin: 0 auto 32px;
+    font-size: 1.05rem;
+  }
+
+  /* ===== Footer ===== */
+  footer {
+    padding: 40px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+  footer a {
+    color: var(--gold);
+    text-decoration: none;
+  }
+
+  /* ===== Warning Box ===== */
+  .warning {
+    background: rgba(240, 185, 11, 0.05);
+    border: 1px solid rgba(240, 185, 11, 0.2);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin: 40px auto 0;
+    max-width: 700px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    text-align: right;
+  }
+  .warning-icon { font-size: 1.5rem; flex-shrink: 0; }
+  .warning p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+  .warning strong { color: var(--gold); }
+
+  @media (max-width: 640px) {
+    .hero { padding: 50px 0 40px; }
+    .section { padding: 60px 0; }
+    .btn-primary, .btn-secondary { padding: 14px 28px; font-size: 0.95rem; width: 100%; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow glow-1"></div>
+<div class="bg-glow glow-2"></div>
+
+<!-- Navbar -->
+<nav>
+  <div class="container nav-content">
+    <div class="logo">
+      <div class="logo-icon">💎</div>
+      Sudan<span>Wallet</span>
+    </div>
+    <a href="#download" class="nav-btn">تحميل الآن</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="badge">
+      <span class="dot"></span>
+      غير احتجازية 100% • مفتوحة المصدر
+    </div>
+
+    <h1>
+      محفظتك الآمنة لـ <span class="highlight">USDT</span><br>
+      على شبكة <span class="highlight">BNB Smart Chain</span>
+    </h1>
+
+    <p class="subtitle">
+      أرسل واستقبل USDT (BEP20) بسهولة تامة. أنت فقط من يملك مفاتيحك الخاصة — لا وسيط، لا قيود، لا تجميد.
+    </p>
+
+    <div class="cta-group" id="download">
+      <a href="SudanWallet.apk" class="btn-primary" download>
+        ⬇️ تحميل التطبيق (APK)
+      </a>
+      <a href="#features" class="btn-secondary">
+        اكتشف المميزات
+      </a>
+    </div>
+
+    <!-- Phone Mockup -->
+    <div class="hero-visual">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="balance-card">
+            <div class="balance-label">الرصيد المتاح</div>
+            <div class="balance-amount">1,250.00 USDT</div>
+            <div class="balance-network">BNB Smart Chain (BEP20)</div>
+          </div>
+          <div class="quick-actions">
+            <div class="action-btn">
+              <span class="icon">📤</span>
+              إرسال
+            </div>
+            <div class="action-btn">
+              <span class="icon">📥</span>
+              استقبال
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Warning -->
+    <div class="warning">
+      <span class="warning-icon">🔐</span>
+      <p>
+        <strong>احتفظ بعبارة الاسترداد (Seed Phrase) في مكان آمن.</strong>
+        نحن لا نحتفظ بأي بيانات خاصة بك، ولا نستطيع استعادة محفظتك إذا فقدتها.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" id="features">
+  <div class="container">
+    <h2 class="section-title">لماذا SudanWallet؟</h2>
+    <p class="section-subtitle">مصممة خصيصاً لمستخدمي USDT في السودان والمنطقة العربية</p>
+
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔑</div>
+        <h3>غير احتجازية بالكامل</h3>
+        <p>المفاتيح الخاصة تُخزَّن على جهازك فقط. لا أحد غيرك — ولا نحن — يستطيع الوصول لأموالك.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>سرعة شبكة BNB</h3>
+        <p>معاملات USDT (BEP20) بتكلفة زهيدة جداً وسرعة تأكيد عالية مقارنة بشبكات أخرى.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">💸</div>
+        <h3>تحويلات بلا حدود</h3>
+        <p>أرسل واستقبل USDT من أي مكان في العالم دون قيود بنكية أو رسوم مرتفعة.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🛡️</div>
+        <h3>أمان بمعايير عالية</h3>
+        <p>تشفير محلي، دعم بصمة الإصبع، والتحقق من العناوين قبل الإرسال لحماية أموالك.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>واجهة عربية بسيطة</h3>
+        <p>تصميم واضح وسهل الاستخدام، مناسبة للمبتدئين في عالم العملات الرقمية.</p>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>مجاني تماماً</h3>
+        <p>لا رسوم اشتراك، لا إعلانات، لا تتبع. التطبيق مجاني ومفتوح المصدر.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Steps -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">ابدأ في 3 خطوات</h2>
+    <p class="section-subtitle">من التحميل إلى أول تحويل في أقل من 5 دقائق</p>
+
+    <div class="steps">
+      <div class="step">
+        <h3>حمّل التطبيق</h3>
+        <p>نزّل ملف APK من هذه الصفحة وثبّته على هاتفك الأندرويد.</p>
+      </div>
+      <div class="step">
+        <h3>أنشئ محفظتك</h3>
+        <p>اضغط "إنشاء محفظة جديدة" واحفظ عبارة الاسترداد الـ 12 كلمة في مكان آمن.</p>
+      </div>
+      <div class="step">
+        <h3>استقبل وأرسل USDT</h3>
+        <p>انسخ عنوان محفظتك لاستقبال USDT، أو ألصق عنوان المستلم للإرسال.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="section">
+  <div class="container">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">غير احتجازية</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">BEP20</div>
+        <div class="stat-label">شبكة USDT المدعومة</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">0$</div>
+        <div class="stat-label">رسوم التطبيق</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">24/7</div>
+        <div class="stat-label">متاح دائماً</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Final CTA -->
+<section class="section">
+  <div class="container">
+    <div class="cta-final">
+      <h2>جاهز تبدأ؟</h2>
+      <p>حمّل SudanWallet الآن وابدأ بإدارة USDT بحرية وأمان تام.</p>
+      <a href="SudanWallet.apk" class="btn-primary" download>
+        ⬇️ تحميل SudanWallet
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>© 2025 SudanWallet — محفظة غير احتجازية على BNB Smart Chain</p>
+    <p style="margin-top: 8px;">
+      صُنع بـ ❤️ لمجتمع USDT العربي
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
